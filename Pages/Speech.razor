@@ -1,0 +1,26 @@
+@inherits SpeechIndex 
+
+@page "/speech"
+
+
+
+
+
+<div class="row margin-bottom-40 ">
+    <div class="col-md-9">
+        <input @bind="SearchTerm" @bind:event="oninput" />
+        <button class="btn" type="button" @onclick="@SearchClick" >Search</button>
+        <button class="btn" type="button" @onclick="@ClearClick">Clear</button>        
+    </div>
+</div>
+
+
+@if(!string.IsNullOrEmpty(@FullText))
+{
+<div class="modal-body">
+<button class="btn btn-primary" @onclick="@ListenAudio" >Click here to listen audio</button>
+<button class="btn btn-primary" @onclick="@Stop">Double Click to Stop the audio</button>
+<button class="btn btn-primary" @onclick="@OnClickDownloadViaHttpClientButton">Download the File</button>
+</div>
+}
+
