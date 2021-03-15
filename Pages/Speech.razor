@@ -15,12 +15,43 @@
 </div>
 
 
+
 @if(!string.IsNullOrEmpty(@FullText))
 {
-<div class="modal-body">
-<button class="btn btn-primary" @onclick="@ListenAudio" >Click here to listen audio</button>
-<button class="btn btn-primary" @onclick="@Stop">Double Click to Stop the audio</button>
-<button class="btn btn-primary" @onclick="@OnClickDownloadViaHttpClientButton">Download the File</button>
+
+<div class="col-3 d-flex pb-3">
+    <div class="card" style="width: 18rem;">
+
+            @if (@IsPlaying)
+            {
+                <a class="btn btn-primary btn-block" @onclick="@StopAudio">
+                    <i class="oi oi-media-stop" aria-hidden="true"></i>
+                    Stop Sound
+                </a>
+            }
+            else
+            {
+                <a class="btn btn-primary btn-block" @onclick="@PlayAudio">
+                    <i class="oi oi-media-play" aria-hidden="true"></i>
+                    Play Sound
+                </a>
+            }
+            <audio @ref="Audio">            
+                <source src="@AudioURL" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+
+            <button class="btn btn-primary" @onclick="@OnClickDownloadViaHttpClientButton">Download the File</button>
+    
+    </div>
+    
 </div>
+
+
+
+
+
+
 }
+
 

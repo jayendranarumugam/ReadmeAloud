@@ -12,54 +12,61 @@ namespace ReadmeAloud
     {
 
         [Inject]
-        protected SpeechService _speechService { get; set; }
+        private SpeechService _speechService { get; set; }
 
         [Inject]
         private IJSRuntime JSRuntime { get; set; }
 
-        public string FullText { get; set; }
+        protected string FullText { get; set; }
+
+        protected string AudioURL { get; set; }
+
+        protected bool IsPlaying { get; set; }
+
+        protected ElementReference Audio { get; set; }
+
+        private byte[] bytes{get;set;}
 
 
         [Parameter]
         public string SearchTerm { get; set; }
 
 
-        public async Task OnClickDownloadViaHttpClientButton()
-        {
 
-            var bytes = await _speechService.SynthesizeAudioAsync(FullText);
+        public async Task OnClickDownloadViaHttpClientButton()
+        {            
             if (bytes == null)
             {
-            await Alert("Something Went Wrong");
-            }
-            else
-            {
-                await JSRuntime.InvokeVoidAsync(
-                                "downloadFromByteArray",
-                                new
-                                {
-                                    ByteArray = bytes,
-                                    FileName = "ReadmeAloudAsMp3.mp3",
-                                    ContentType = "audio/mpeg"
-                                });
+                await Alert("Something Went Wrong");
             }
 
+            await JSRuntime.InvokeVoidAsync(
+                            "downloadFromByteArray",
+                            new
+                            {
+                                ByteArray = bytes,
+                                FileName = "ReadmeAloudAsMp3.mp3",
+                                ContentType = "audio/mpeg"
+                            });
 
         }
-        protected void ListenAudio()
-        {            
-            _speechService.SynthesisToSpeakerAsync(FullText);
-        }
 
-        protected void Stop()
-        {
-            _speechService.StopSynthesisToSpeakerAsync();
-        }
 
         private async void Search(string gitHubRawURL)
         {
-            FullText = await GetFullTextFromReadme(gitHubRawURL);
-            StateHasChanged();
+            FullText = await GetFullTextFromReadme(gitHubRawURL);            
+            if (FullText != null)
+            {
+                bytes = await _speechService.SynthesizeAudioAsync(FullText);
+                
+                if (bytes == null)
+                {
+                    await Alert("Something Went Wrong");
+                }
+                AudioURL = "data:audio/mpeg;base64," + Convert.ToBase64String(bytes);
+                StateHasChanged();
+            }
+
         }
 
         private async Task<string> GetFullTextFromReadme(string gitubURL)
@@ -104,6 +111,26 @@ namespace ReadmeAloud
         {
             SearchTerm = "";
             FullText = "";
+            StateHasChanged();
+        }
+
+
+        protected async Task PlayAudio()
+        {
+            await JSRuntime.InvokeVoidAsync("playAudio", Audio);
+            IsPlaying = true;
+        }
+
+        protected async Task StopAudio()
+        {
+            await JSRuntime.InvokeVoidAsync("stopAudio", Audio);
+            IsPlaying = false;
+        }
+
+        [JSInvokable]
+        protected async Task OnEnd()
+        {
+            IsPlaying = false;
             StateHasChanged();
         }
 

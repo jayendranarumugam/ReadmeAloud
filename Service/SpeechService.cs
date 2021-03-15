@@ -7,7 +7,6 @@ namespace ReadmeAloud.Service
 {
     public class SpeechService
     {
-        private SpeechSynthesizer synthesizer;
 
         private readonly IConfiguration Configuration;
         
@@ -15,18 +14,8 @@ namespace ReadmeAloud.Service
         {
            Configuration = configuration;
         }
+              
 
-        public async void SynthesisToSpeakerAsync(string text)
-        {
-            SpeechConfig speechConfig= SpeechConfig.FromSubscription(Configuration["CognitiveAPIKey"], Configuration["CognitiveAPIRegion"]);
-            synthesizer = new SpeechSynthesizer(speechConfig);
-            await synthesizer.SpeakTextAsync(text);
-        }
-                
-        public void StopSynthesisToSpeakerAsync()
-        {
-            synthesizer.StopSpeakingAsync();
-        }
 
         public async Task<byte[]> SynthesizeAudioAsync(string text)
         {

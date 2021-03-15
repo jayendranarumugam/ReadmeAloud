@@ -17,6 +17,27 @@ function downloadFromByteArray(options) {
     downloadFromUrl({ url: url, fileName: options.fileName });
 }
 
+function getDownloadURL(options) {
+    var url = "data:" + options.contentType + ";base64," + options.byteArray;
+    return url;
+}
+
 window. Alert = function(message) {
     alert(message);
+}
+
+function initAudio(element, reference){
+    element.addEventListener("ended", async e => {
+        await reference.invokeMethodAsync("OnEnd");
+    });
+}
+
+function playAudio(element) {
+    stopAudio(element);
+    element.play();
+}
+
+function stopAudio(element) {
+    element.pause();
+    element.currentTime = 0;
 }
