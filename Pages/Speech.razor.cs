@@ -127,13 +127,6 @@ namespace ReadmeAloud
             IsPlaying = false;
         }
 
-        // [JSInvokable]
-        // protected async Task OnEnd()
-        // {
-        //     IsPlaying = false;
-        //     StateHasChanged();
-        // }
-
 
 
     }
